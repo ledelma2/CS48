@@ -1,0 +1,10 @@
+C:\Users\Liam Edelman\Documents\School\CS480\Project2\CreateDBGUI\CreateDBGUI\bin\Debug\CreateDBGUI.exe.config
+C:\Users\Liam Edelman\Documents\School\CS480\Project2\CreateDBGUI\CreateDBGUI\bin\Debug\CreateDBGUI.exe
+C:\Users\Liam Edelman\Documents\School\CS480\Project2\CreateDBGUI\CreateDBGUI\bin\Debug\CreateDBGUI.pdb
+C:\Users\Liam Edelman\Documents\School\CS480\Project2\CreateDBGUI\CreateDBGUI\obj\Debug\CreateDBGUI.csprojAssemblyReference.cache
+C:\Users\Liam Edelman\Documents\School\CS480\Project2\CreateDBGUI\CreateDBGUI\obj\Debug\CreateDBGUI.Form1.resources
+C:\Users\Liam Edelman\Documents\School\CS480\Project2\CreateDBGUI\CreateDBGUI\obj\Debug\CreateDBGUI.Properties.Resources.resources
+C:\Users\Liam Edelman\Documents\School\CS480\Project2\CreateDBGUI\CreateDBGUI\obj\Debug\CreateDBGUI.csproj.GenerateResource.cache
+C:\Users\Liam Edelman\Documents\School\CS480\Project2\CreateDBGUI\CreateDBGUI\obj\Debug\CreateDBGUI.csproj.CoreCompileInputs.cache
+C:\Users\Liam Edelman\Documents\School\CS480\Project2\CreateDBGUI\CreateDBGUI\obj\Debug\CreateDBGUI.exe
+C:\Users\Liam Edelman\Documents\School\CS480\Project2\CreateDBGUI\CreateDBGUI\obj\Debug\CreateDBGUI.pdb

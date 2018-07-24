@@ -1,0 +1,7 @@
+C:\Users\Liam Edelman\Documents\School\CS480\Project1\CreateDBApp\CreateDBApp\bin\Debug\CreateDBApp.exe.config
+C:\Users\Liam Edelman\Documents\School\CS480\Project1\CreateDBApp\CreateDBApp\bin\Debug\CreateDBApp.exe
+C:\Users\Liam Edelman\Documents\School\CS480\Project1\CreateDBApp\CreateDBApp\bin\Debug\CreateDBApp.pdb
+C:\Users\Liam Edelman\Documents\School\CS480\Project1\CreateDBApp\CreateDBApp\obj\Debug\CreateDBApp.csprojAssemblyReference.cache
+C:\Users\Liam Edelman\Documents\School\CS480\Project1\CreateDBApp\CreateDBApp\obj\Debug\CreateDBApp.csproj.CoreCompileInputs.cache
+C:\Users\Liam Edelman\Documents\School\CS480\Project1\CreateDBApp\CreateDBApp\obj\Debug\CreateDBApp.exe
+C:\Users\Liam Edelman\Documents\School\CS480\Project1\CreateDBApp\CreateDBApp\obj\Debug\CreateDBApp.pdb
