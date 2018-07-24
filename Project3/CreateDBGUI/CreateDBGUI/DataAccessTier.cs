@@ -157,7 +157,7 @@ namespace DataAccessTier
                 else
                     db = con;
 
-                if(db.State == ConnectionState.Closed)
+                if (db.State == ConnectionState.Closed)
                     db.Open();
 
                 SqlCommand cmd = new SqlCommand();
@@ -182,6 +182,58 @@ namespace DataAccessTier
                 // close connection:
                 //
                 if (db != null && db.State != ConnectionState.Closed && complete)
+                    db.Close();
+            }
+        }
+
+        public void ExecuteActionQuery(string[] sql, string il)
+        {
+            SqlConnection db = null;
+            SqlTransaction tx = null;
+
+            try
+            {
+
+                db = new SqlConnection(_DBConnectionInfo);
+
+                db.Open();
+
+                SqlCommand cmd = new SqlCommand();
+                if (il == "ru")
+                    tx = db.BeginTransaction(IsolationLevel.ReadUncommitted);
+                else if (il == "rr")
+                    tx = db.BeginTransaction(IsolationLevel.RepeatableRead);
+                else if (il == "s")
+                    tx = db.BeginTransaction(IsolationLevel.Serializable);
+                else
+                    tx = db.BeginTransaction();
+                cmd.Connection = db;
+                cmd.Transaction = tx;
+                
+                foreach(string commands in sql)
+                {
+                    cmd.CommandText = commands;
+                    cmd.ExecuteNonQuery();
+                }
+
+                tx.Commit();             
+            }
+            catch (Exception ex)
+            {
+                //
+                // something failed, so rethrow the exception so caller knows:
+                //
+                if(tx != null)
+                    tx.Rollback();
+                ExceptionDispatchInfo.Capture(ex).Throw();  // rethrow while preserving stack
+                throw;  // avoid compiler warnings
+            }
+            finally
+            {
+                //
+                // close connection:
+                //
+                if (db != null && db.State != ConnectionState.Closed)
                     db.Close();
             }
         }

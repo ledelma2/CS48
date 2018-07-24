@@ -505,9 +505,12 @@ namespace CreateDBGUI
             string resetRent = string.Format(@"
             TRUNCATE TABLE Rentals;");
 
-            var db = data.ExecuteActionQuery(resetCust, null, false);
-            data.ExecuteActionQuery(resetBike, db, false);
-            data.ExecuteActionQuery(resetRent, db, true);
+            List<string> sql = new List<string>();
+            sql.Add(resetCust);
+            sql.Add(resetBike);
+            sql.Add(resetRent);
+
+            data.ExecuteActionQuery(sql.ToArray(), "s");
 
             MessageBox.Show("Database reset...");
         }
