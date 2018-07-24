@@ -38,8 +38,6 @@
             this.ReturnRental = new System.Windows.Forms.Button();
             this.StartRental = new System.Windows.Forms.Button();
             this.RentalDuration = new System.Windows.Forms.TextBox();
-            this.BikeIDs = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.ResetDatabase = new System.Windows.Forms.Button();
             this.RentalBox = new System.Windows.Forms.CheckedListBox();
@@ -48,7 +46,7 @@
             // Filename
             // 
             this.Filename.AccessibleDescription = "Filename.mdf";
-            this.Filename.Location = new System.Drawing.Point(241, 204);
+            this.Filename.Location = new System.Drawing.Point(241, 157);
             this.Filename.Name = "Filename";
             this.Filename.Size = new System.Drawing.Size(160, 20);
             this.Filename.TabIndex = 0;
@@ -59,7 +57,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(183, 207);
+            this.label1.Location = new System.Drawing.Point(183, 160);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 13);
             this.label1.TabIndex = 1;
@@ -108,7 +106,7 @@
             this.DispRent.Name = "DispRent";
             this.DispRent.Size = new System.Drawing.Size(125, 25);
             this.DispRent.TabIndex = 6;
-            this.DispRent.Text = "Display Rentals";
+            this.DispRent.Text = "Display Available Bikes";
             this.DispRent.UseVisualStyleBackColor = true;
             this.DispRent.Click += new System.EventHandler(this.DispRent_Click);
             // 
@@ -134,34 +132,16 @@
             // 
             // RentalDuration
             // 
-            this.RentalDuration.Location = new System.Drawing.Point(301, 178);
+            this.RentalDuration.Location = new System.Drawing.Point(301, 131);
             this.RentalDuration.Name = "RentalDuration";
             this.RentalDuration.Size = new System.Drawing.Size(100, 20);
             this.RentalDuration.TabIndex = 9;
-            // 
-            // BikeIDs
-            // 
-            this.BikeIDs.Location = new System.Drawing.Point(301, 152);
-            this.BikeIDs.Name = "BikeIDs";
-            this.BikeIDs.Size = new System.Drawing.Size(100, 20);
-            this.BikeIDs.TabIndex = 10;
-            this.BikeIDs.Text = "ex. 1,2,3...";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(243, 155);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(52, 13);
-            this.label2.TabIndex = 11;
-            this.label2.Text = "Bike ID\'s:";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(163, 181);
+            this.label4.Location = new System.Drawing.Point(163, 134);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(132, 13);
             this.label4.TabIndex = 13;
@@ -170,7 +150,7 @@
             // ResetDatabase
             // 
             this.ResetDatabase.Location = new System.Drawing.Point(12, 166);
-            this.ResetDatabase.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ResetDatabase.Margin = new System.Windows.Forms.Padding(2);
             this.ResetDatabase.Name = "ResetDatabase";
             this.ResetDatabase.Size = new System.Drawing.Size(125, 25);
             this.ResetDatabase.TabIndex = 14;
@@ -191,12 +171,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Navy;
-            this.ClientSize = new System.Drawing.Size(661, 255);
+            this.ClientSize = new System.Drawing.Size(661, 234);
             this.Controls.Add(this.RentalBox);
             this.Controls.Add(this.ResetDatabase);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.BikeIDs);
             this.Controls.Add(this.RentalDuration);
             this.Controls.Add(this.StartRental);
             this.Controls.Add(this.ReturnRental);
@@ -226,8 +204,6 @@
         private System.Windows.Forms.Button ReturnRental;
         private System.Windows.Forms.Button StartRental;
         private System.Windows.Forms.TextBox RentalDuration;
-        private System.Windows.Forms.TextBox BikeIDs;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button ResetDatabase;
         private System.Windows.Forms.CheckedListBox RentalBox;

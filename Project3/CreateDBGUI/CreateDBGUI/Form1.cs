@@ -140,8 +140,7 @@ namespace CreateDBGUI
                 return;
             DataAccessTier.Data data = new DataAccessTier.Data(this.Filename.Text);
 
-            PrimeData.Items.Clear();
-            SecData.Items.Clear();
+            RentalBox.Items.Clear();
 
             string dispRents = string.Format(@"
             SELECT Bike.BID, Bike_Type._Description, Bike.BTID, Bike.YearDeployed
@@ -265,11 +264,11 @@ namespace CreateDBGUI
 
             //Get Data from Primary Data table
             string primeData = this.PrimeData.Text;
-            string IDs = this.BikeIDs.Text;
+            var IDs = this.RentalBox.CheckedItems;
             string hours = this.RentalDuration.Text;
 
             //Check if Data exists
-            if (primeData == "" || IDs == "" || hours == "")
+            if (primeData == "" || IDs.Count == 0 || hours == "")
             {
                 MessageBox.Show("One or more fields are blank...");
                 return;
@@ -277,8 +276,12 @@ namespace CreateDBGUI
 
             //Parse the data
             double expectedHours = Convert.ToDouble(hours);
-            string[] BIDs = IDs.Split(',');
             string[] name = primeData.Split(',');
+            List<string> BIDs = new List<string>();
+            foreach (string id in IDs)
+            {
+                BIDs.Add(id.Substring(0, 4));
+            }
 
             //Check if Data is valid
             if (expectedHours <= 0)
@@ -500,11 +503,13 @@ namespace CreateDBGUI
             SET RentedOut = 0;");
 
             string resetRent = string.Format(@"
-            DELETE FROM Rentals;");
+            TRUNCATE TABLE Rentals;");
 
             var db = data.ExecuteActionQuery(resetCust, null, false);
             data.ExecuteActionQuery(resetBike, db, false);
             data.ExecuteActionQuery(resetRent, db, true);
+
+            MessageBox.Show("Database reset...");
         }
     }
 }
