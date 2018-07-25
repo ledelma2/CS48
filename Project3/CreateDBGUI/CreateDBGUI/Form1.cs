@@ -194,6 +194,8 @@ namespace CreateDBGUI
                 return;
             }
 
+            List<string> sql = new List<string>();
+
             string getBID = string.Format(@"
             SELECT RID, BID
             FROM Rentals WITH (INDEX(CID_Index))
@@ -209,16 +211,14 @@ namespace CreateDBGUI
                 WHERE CID = {0};",
             custID);
 
-            var db = data.ExecuteActionQuery(rentalUpdate, null, false);
-
             string custUpdate = string.Format(@"
             UPDATE Customer
                 SET RentingOut = 0
                 WHERE CID = {0};",
             custID);
 
-            data.ExecuteActionQuery(custUpdate, db, false);
-            
+            sql.Add(rentalUpdate);
+            sql.Add(custUpdate);
             foreach(DataRow row in ds.Tables[0].Rows)
             {
                 string bikeUpdate = string.Format(@"
@@ -227,8 +227,10 @@ namespace CreateDBGUI
                     WHERE BID = {0};",
                 row["BID"]);
 
-                data.ExecuteActionQuery(bikeUpdate, db, true);
+                sql.Add(bikeUpdate);
             }
+
+            data.ExecuteActionQuery(sql.ToArray(), "s");
 
             double total = 0.0;
             DataSet money = new DataSet();
@@ -325,13 +327,7 @@ namespace CreateDBGUI
                 return;
             }
 
-            string bu = string.Format(@"
-                UPDATE Bike
-                    SET RentedOut = 1
-                    WHERE BID = {0};",
-                Int32.Parse(BIDs[0]));
-
-            var db = data.ExecuteActionQuery(bu, null, false);
+            List<string> sql = new List<string>();
 
             //Create the Rental entry and modify the Customer and Bike entries
             foreach (string id in BIDs)
@@ -342,7 +338,7 @@ namespace CreateDBGUI
                     WHERE BID = {0};",
                 Int32.Parse(id));
 
-                data.ExecuteActionQuery(bikeUpdate, db, false);
+                sql.Add(bikeUpdate);
             }
 
             string custUpdate = string.Format(@"
@@ -351,7 +347,7 @@ namespace CreateDBGUI
                 WHERE CID = {0};",
             custID);
 
-            data.ExecuteActionQuery(custUpdate, db, false);
+            sql.Add(custUpdate);
             
             foreach(string id in BIDs)
             {
@@ -361,17 +357,28 @@ namespace CreateDBGUI
                     Values({0},GetDate(),{1},{2});",
                     hours, custID, Int32.Parse(id));
 
-                data.ExecuteActionQuery(createRental, db, true);
+                sql.Add(createRental);
+            }
 
-                string getRentalID = string.Format(@"
+            data.ExecuteActionQuery(sql.ToArray(), "s");
+
+            string getRentalID = string.Format(@"
                 SELECT TOP 1 RID
                 FROM Rentals
                 ORDER BY RID DESC;");
 
-                var rentID = data.ExecuteScalarQuery(getRentalID);
+            var rentID = data.ExecuteScalarQuery(getRentalID);
 
-                MessageBox.Show("Rental ID: " + rentID.ToString());
+            int i = Int32.Parse(rentID.ToString());
+
+            int c = BIDs.Count();
+
+            for(int a = i - c + 1; a <= i; a++)
+            {
+                MessageBox.Show("Rental ID: " + a.ToString());
             }
+
+            
         }
 
         private void Filename_TextChanged(object sender, EventArgs e)

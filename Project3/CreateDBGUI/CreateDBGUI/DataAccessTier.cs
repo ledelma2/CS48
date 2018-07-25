@@ -146,46 +146,6 @@ namespace DataAccessTier
         // ExecutionActionQuery:  executes an Insert, Update or Delete query, and returns
         // the number of records modified.
         //
-        public SqlConnection ExecuteActionQuery(string sql, SqlConnection con, bool complete)
-        {
-            SqlConnection db = null;
-
-            try
-            {
-                if (con == null)
-                    db = new SqlConnection(_DBConnectionInfo);
-                else
-                    db = con;
-
-                if (db.State == ConnectionState.Closed)
-                    db.Open();
-
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = db;
-                cmd.CommandText = sql;
-
-                int rowsModified = cmd.ExecuteNonQuery();
-
-                return db;
-            }
-            catch (Exception ex)
-            {
-                //
-                // something failed, so rethrow the exception so caller knows:
-                //
-                ExceptionDispatchInfo.Capture(ex).Throw();  // rethrow while preserving stack
-                throw;  // avoid compiler warnings
-            }
-            finally
-            {
-                //
-                // close connection:
-                //
-                if (db != null && db.State != ConnectionState.Closed && complete)
-                    db.Close();
-            }
-        }
-
         public void ExecuteActionQuery(string[] sql, string il)
         {
             SqlConnection db = null;
