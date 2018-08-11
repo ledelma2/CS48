@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace CoursemoAPP
 {
-    public partial class Form1 : Form
+    public partial class Coursemo : Form
     {
-        public Form1()
+        public Coursemo()
         {
             InitializeComponent();
         }

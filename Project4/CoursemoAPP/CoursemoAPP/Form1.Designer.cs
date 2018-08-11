@@ -1,6 +1,6 @@
 ﻿namespace CoursemoAPP
 {
-    partial class Form1
+    partial class Coursemo
     {
         /// <summary>
         /// Required designer variable.
@@ -28,10 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // Coursemo
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.BackColor = System.Drawing.Color.DarkOrange;
+            this.ClientSize = new System.Drawing.Size(1774, 829);
+            this.Name = "Coursemo";
             this.Text = "Form1";
+            this.ResumeLayout(false);
+
         }
 
         #endregion
