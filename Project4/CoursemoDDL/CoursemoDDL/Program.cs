@@ -102,10 +102,10 @@ namespace CoursemoDDL
 
                         string BikeTypesSQL = string.Format(@"
                         Insert Into
-                            Courses(CRN, Department, Number, _Year, _Type, _Day, _Time, Size, Available)
-                            Values({0},'{1}','{2}','{3}','{4}','{5}','{6}',{7},{8});
+                            Courses(CRN, Department, Number, _Year, _Semester, _Day, _Time, Size, Available, _Type)
+                            Values({0},'{1}','{2}','{3}','{4}','{5}','{6}',{7},{8},'{9}');
                         ",
-                        CRN, values[0], values[1], values[3], values[2], values[6], values[7], Size, Available);
+                        CRN, values[0], values[1], values[3], values[2], values[6], values[7], Size, Available, values[5]);
 
                         data.ExecuteActionQuery(BikeTypesSQL);
                     }
@@ -122,8 +122,8 @@ namespace CoursemoDDL
 
                         string[] values = line.Split(',');
 
-                        string first = values[0];
-                        string last = values[1];
+                        string last = values[0];
+                        string first = values[1];
                         string netid = values[2];
 
                         if(first.Contains("'"))
