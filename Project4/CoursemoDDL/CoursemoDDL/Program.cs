@@ -1,31 +1,20 @@
-﻿
-//
-// Console app to create a database, e.g. BikeHike.
-//
-// Liam Edelman
-// U. of Illinois, Chicago
-// CS480, Summer 2018
-// Project #3
-//
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CreateDBApp
+namespace CoursemoDDL
 {
     class Program
     {
-
         static void Main(string[] args)
         {
             Console.WriteLine();
             Console.WriteLine("** Create Database Console App **");
             Console.WriteLine();
 
-            string baseDatabaseName = "BikeHike";
+            string baseDatabaseName = "Coursemo";
             string sql;
 
             try
@@ -97,9 +86,9 @@ namespace CreateDBApp
                 //
                 //Console.WriteLine("**TODO**");
                 //
-                //parse biketypes.csv
-                Console.WriteLine("Inserting BikeTypes...");
-                using (var file = new System.IO.StreamReader("BikeTypes.csv"))
+                //parse Courses.csv
+                Console.WriteLine("Inserting Courses...");
+                using (var file = new System.IO.StreamReader("courses.csv"))
                 {
                     while (!file.EndOfStream)
                     {
@@ -107,23 +96,25 @@ namespace CreateDBApp
 
                         string[] values = line.Split(',');
 
-                        string desc = values[1];
-                        double price = Convert.ToDouble(values[2]);
+                        int CRN = Int32.Parse(values[4]);
+                        int Size = Int32.Parse(values[8]);
+                        int Available = Int32.Parse(values[8]);
 
                         string BikeTypesSQL = string.Format(@"
                         Insert Into
-                            Bike_Type(_Description,Price)
-                            Values('{0}',{1});
+                            Courses(CRN, Department, Number, _Year, _Semester, _Day, _Time, Size, Available, _Type)
+                            Values({0},'{1}','{2}','{3}','{4}','{5}','{6}',{7},{8},'{9}');
                         ",
-                        desc, price);
+                        CRN, values[0], values[1], values[3], values[2], values[6], values[7], Size, Available, values[5]);
 
                         data.ExecuteActionQuery(BikeTypesSQL);
                     }
                 }
+                Console.WriteLine("Courses Inserted.");
 
-                //parse customers.csv
-                Console.WriteLine("Inserting Customers...");
-                using (var file = new System.IO.StreamReader("Customers.csv"))
+                //parse Students.csv
+                Console.WriteLine("Inserting Students...");
+                using (var file = new System.IO.StreamReader("students.csv"))
                 {
                     while (!file.EndOfStream)
                     {
@@ -131,46 +122,33 @@ namespace CreateDBApp
 
                         string[] values = line.Split(',');
 
+                        string last = values[0];
                         string first = values[1];
-                        string last = values[2];
-                        string email = values[3];
+                        string netid = values[2];
+
+                        if(first.Contains("'"))
+                        {
+                            int index = first.IndexOf("'");
+                            first = first.Insert(index, "'");
+                        }
+                        if (last.Contains("'"))
+                        {
+                            int index = last.IndexOf("'");
+                            last = last.Insert(index, "'");
+                        }
 
                         string CustomerSQL = string.Format(@"
                         Insert Into
-                            Customer(FirstName,LastName,Email, RentingOut)
-                            Values('{0}','{1}','{2}', 0);
-                        ", 
-                        first, last, email);
+                            Students(LastName,FirstName,Netid)
+                            Values('{0}','{1}','{2}');
+                        ",
+                        last, first, netid);
 
                         data.ExecuteActionQuery(CustomerSQL);
 
                     }
                 }
-
-                //parse bikes.csv
-                Console.WriteLine("Inserting Bikes...");
-                using (var file = new System.IO.StreamReader("Bikes.csv"))
-                {
-                    while (!file.EndOfStream)
-                    {
-                        string line = file.ReadLine();
-
-                        string[] values = line.Split(',');
-
-                        int typeid = Convert.ToInt32(values[1]);
-                        string year = values[2];
-
-                        string BikesSQL = string.Format(@"
-                        Insert Into
-                            Bike(BTID,YearDeployed,RentedOut)
-                            Values({0},'{1}',0);
-                        ",
-                        typeid, year);
-
-                        data.ExecuteActionQuery(BikesSQL);
-                    }
-                }
-                Console.WriteLine();
+                Console.WriteLine("Students Inserted");
 
                 //
                 // Done
@@ -225,7 +203,5 @@ namespace CreateDBApp
 
             System.IO.File.Copy(from_file, to_file);
         }
-
-    }//class
-}//namespace
-
+    }
+}
