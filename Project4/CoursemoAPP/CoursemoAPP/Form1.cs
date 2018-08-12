@@ -23,11 +23,23 @@ namespace CoursemoAPP
                 this.Students.Items.Clear();
                 this.Courses.Items.Clear();
 
-                foreach (Student c in db.Students)
-                    this.Students.Items.Add(c.Netid + ": " + c.LastName + ", " + c.FirstName);
+                var cquery = from c in db.Courses
+                             orderby c.Department, c.Number, c.CRN
+                             select c;
 
-                foreach (Course c in db.Courses)
+                foreach(Course c in cquery)
+                {
                     this.Courses.Items.Add(c.Department + " " + c.Number + ": " + c.CRN.ToString());
+                }
+
+                var squery = from s in db.Students
+                             orderby s.Netid, s.LastName, s.FirstName
+                             select s;
+
+                foreach(Student s in squery)
+                {
+                    this.Students.Items.Add(s.Netid + ": " + s.LastName + ", " + s.FirstName);
+                }
             }
         }
 
@@ -49,9 +61,10 @@ namespace CoursemoAPP
                     MessageBox.Show("Student or Course doesn't exist!?!");
                     return;
                 }
+
                 foreach (Waitlist w in db.Waitlists)
                 {
-                    if (w.ID == s.ID)
+                    if (w.ID == s.ID && w.CRN == c.CRN)
                     {
                         MessageBox.Show("Student already waitlisted...");
                         return;
@@ -60,7 +73,7 @@ namespace CoursemoAPP
 
                 foreach (Enrolled i in db.Enrolleds)
                 {
-                    if (i.ID == s.ID)
+                    if (i.ID == s.ID && i.CRN == c.CRN)
                     {
                         MessageBox.Show("Student already enrolled...");
                         return;
@@ -122,46 +135,56 @@ namespace CoursemoAPP
 
             MessageBox.Show("Database reset...");
 
-            this.Courses_SelectedIndexChanged(this, null);
+            this.CourseDetails.Items.Clear();
+            this.Waitlist.Items.Clear();
+            this.Enrolled.Items.Clear();
         }
 
         private void Students_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //using (db = new CoursemoDataContext())
-            //{
-            //    string info = this.Students.Text;
-            //    int ID = Int32.Parse(info.Substring(0, info.IndexOf(":")));
+            using (db = new CoursemoDataContext())
+            {
+                this.Enrolled.Items.Clear();
+                this.Waitlist.Items.Clear();
+                string info = this.Students.Text;
+                string netid = info.Substring(0, info.IndexOf(":"));
 
-            //    var getWaitlist = from w in db.Waitlists
-            //                      join c in db.Courses
-            //                      on w.CRN equals c.CRN
-            //                      where w.ID == ID
-            //                      select new
-            //                      {
-            //                          crn = c.CRN,
-            //                          Dep = c.Department,
-            //                          Num = c.Number
-            //                      };
+                Student s = db.GetStudent(netid);
 
-            //    foreach (var w in getWaitlist)
-            //        this.Waitlist.Items.Add(w.Dep + " " + w.Num + ", " + w.crn);
+                var wquery = from w in db.Waitlists
+                             where w.ID == s.ID
+                             join c in db.Courses
+                             on w.CRN equals c.CRN
+                             select new
+                             {
+                                 crn = c.CRN,
+                                 dep = c.Department,
+                                 num = c.Number
+                             };
 
-            //    var getEnrolled = from w in db.Waitlists
-            //                      join c in db.Courses
-            //                      on w.CRN equals c.CRN
-            //                      where w.ID == ID
-            //                      select new
-            //                      {
-            //                          crn = c.CRN,
-            //                          Dep = c.Department,
-            //                          Num = c.Number
-            //                      };
+                foreach (var c in wquery)
+                {
+                    this.Waitlist.Items.Add(c.dep + " " + c.num + ": " + c.crn);
+                }
 
-            //    foreach (var w in getEnrolled)
-            //        this.Waitlist.Items.Add(w.Dep + " " + w.Num + ", " + w.crn);
+                var equery = from w in db.Enrolleds
+                             where w.ID == s.ID
+                             join c in db.Courses
+                             on w.CRN equals c.CRN
+                             select new
+                             {
+                                 crn = c.CRN,
+                                 dep = c.Department,
+                                 num = c.Number
+                             };
+
+                foreach (var c in equery)
+                {
+                    this.Enrolled.Items.Add(c.dep + " " + c.num + ": " + c.crn);
+                }
 
 
-            //}
+            }
         }
 
         private void Courses_SelectedIndexChanged(object sender, EventArgs e)
@@ -206,7 +229,7 @@ namespace CoursemoAPP
                 var equery = from w in db.Enrolleds
                              where w.CRN == c.CRN
                              join s in db.Students
-                             on w.ID equals s.ID                            
+                             on w.ID equals s.ID
                              select new
                              {
                                  netid = s.Netid,
