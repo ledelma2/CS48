@@ -20,62 +20,79 @@ namespace CoursemoAPP
 
             using (db = new CoursemoDataContext())
             {
-
-                var squery = from c in db.Students
-                             orderby c.Netid
-                             select c;
-
                 this.Students.Items.Clear();
                 this.Courses.Items.Clear();
 
-                foreach (Student c in squery)
+                foreach (Student c in db.Students)
                     this.Students.Items.Add(c.Netid + ": " + c.LastName + ", " + c.FirstName);
 
-                var cquery = from c in db.Courses
-                             orderby c.Department, c.Number
-                             select c;
-                foreach (Course c in cquery)
+                foreach (Course c in db.Courses)
                     this.Courses.Items.Add(c.Department + " " + c.Number + ": " + c.CRN.ToString());
             }
         }
 
         private void Enroll_Click(object sender, EventArgs e)
         {
-            //using (db = new CoursemoDataContext())
-            //{
-            //    this.CourseDetails.Items.Clear();
+            using (db = new CoursemoDataContext())
+            {
+                int crn;
+                string info = this.Students.Text;
+                string netid = info.Substring(0, info.IndexOf(":"));
+                info = this.Courses.Text;
+                crn = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
 
-            //    int id, crn;
-            //    string info = this.Students.Text;
-            //    string netid = info.Substring(0, info.IndexOf(":"));
-            //    info = this.Courses.Text;
-            //    crn = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
+                Student s = db.GetStudent(netid);
+                Course c = db.GetCourse(crn);
 
-            //    Student a = db.GetStudentID(netid);
+                if (s == null || c == null)
+                {
+                    MessageBox.Show("Student or Course doesn't exist!?!");
+                    return;
+                }
+                foreach (Waitlist w in db.Waitlists)
+                {
+                    if (w.ID == s.ID)
+                    {
+                        MessageBox.Show("Student already enrolled...");
+                        return;
+                    }
+                }
 
+                foreach (Enrolled i in db.Enrolleds)
+                {
+                    if (i.ID == s.ID)
+                    {
+                        MessageBox.Show("Student already waitlisted...");
+                        return;
+                    }
+                }
 
-            //    if (courseFull.ElementAt(0).Size == courseFull.ElementAt(0).Available)
-            //    {
-            //        Waitlist i = new Waitlist();
-            //        i.ID = ID;
-            //        i.CRN = CRN;
-            //        db.Waitlists.InsertOnSubmit(i);
-            //        db.SubmitChanges();
+                if (c.Available == 0)
+                {
+                    Waitlist i = new Waitlist();
+                    i.ID = s.ID;
+                    i.CRN = c.CRN;
+                    db.Waitlists.InsertOnSubmit(i);
+                    db.SubmitChanges();
 
-            //        MessageBox.Show("Studen Put on Waitlist");
-            //    }
-            //    else
-            //    {
-            //        Enrolled i = new Enrolled();
-            //        i.ELID = 
-            //        i.ID = ID;
-            //        i.CRN = CRN;
-            //        db.Enrolleds.InsertOnSubmit(i);
-            //        db.SubmitChanges();
+                    MessageBox.Show("Student Put on Waitlist");
+                }
+                else
+                {
+                    Enrolled i = new Enrolled();
+                    i.ELID =
+                    i.ID = s.ID;
+                    i.CRN = c.CRN;
+                    db.Enrolleds.InsertOnSubmit(i);
+                    c.Available = c.Available - 1;
+                    db.SubmitChanges();
 
-            //        MessageBox.Show("Student Enrolled in Course");
-            //    }
-            //}
+                    MessageBox.Show("Student Enrolled in Course");
+                }
+
+                this.CourseDetails.Items.Clear();
+                this.Courses_SelectedIndexChanged(this, null);
+            }
 
         }
 
@@ -91,15 +108,21 @@ namespace CoursemoAPP
 
         private void Reset_Click(object sender, EventArgs e)
         {
-            //using (db = new CoursemoDataContext())
-            //{
-            //    db.ExecuteCommand("TRUNCATE TABLE Waitlist;");
-            //    db.ExecuteCommand("TRUNCATE TABLE Enrolled;");
+            using (db = new CoursemoDataContext())
+            {
+                db.ExecuteCommand("TRUNCATE TABLE Waitlist;");
+                db.ExecuteCommand("TRUNCATE TABLE Enrolled;");
+                foreach (Course c in db.Courses)
+                {
+                    c.Available = c.Size;
+                }
 
-            //    db.SubmitChanges();
-            //}
+                db.SubmitChanges();
+            }
 
-            //MessageBox.Show("Database reset...");
+            MessageBox.Show("Database reset...");
+
+            this.Courses_SelectedIndexChanged(this, null);
         }
 
         private void Students_SelectedIndexChanged(object sender, EventArgs e)
@@ -154,6 +177,14 @@ namespace CoursemoAPP
                 if (c == null)
                     return;
 
+                int onWaitlist = 0;
+
+                foreach(Waitlist w in db.Waitlists)
+                {
+                    if (c.CRN == w.CRN)
+                        onWaitlist++;
+                }
+
                 this.CourseDetails.Items.Add("Semester: " + c._Semester);
                 this.CourseDetails.Items.Add("Year: " + c._Year);
                 this.CourseDetails.Items.Add("Type: " + c._Type);
@@ -161,6 +192,7 @@ namespace CoursemoAPP
                 this.CourseDetails.Items.Add("Time: " + c._Time);
                 this.CourseDetails.Items.Add("Size: " + c.Size.ToString());
                 this.CourseDetails.Items.Add("Current Enrollment: " + (c.Size - c.Available).ToString());
+                this.CourseDetails.Items.Add("Current Waitlisted: " + onWaitlist.ToString());
             }
         }
     }
