@@ -41,56 +41,41 @@ namespace CoursemoAPP
 
         private void Enroll_Click(object sender, EventArgs e)
         {
-            using (db = new CoursemoDataContext())
-            {
-                this.CourseDetails.Items.Clear();
-                string info = this.Courses.Text;
-                int CRN = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
+            //using (db = new CoursemoDataContext())
+            //{
+            //    this.CourseDetails.Items.Clear();
 
-                MessageBox.Show("");
+            //    int id, crn;
+            //    string info = this.Students.Text;
+            //    string netid = info.Substring(0, info.IndexOf(":"));
+            //    info = this.Courses.Text;
+            //    crn = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
 
-                info = this.Students.Text;
-                string netid = info.Substring(0, info.IndexOf(":"));
+            //    Student a = db.GetStudentID(netid);
 
-                MessageBox.Show("");
 
-                var enrolled = from a in db.Enrolleds
-                               where a.CRN == CRN && a.ID == ID
-                               select a;
+            //    if (courseFull.ElementAt(0).Size == courseFull.ElementAt(0).Available)
+            //    {
+            //        Waitlist i = new Waitlist();
+            //        i.ID = ID;
+            //        i.CRN = CRN;
+            //        db.Waitlists.InsertOnSubmit(i);
+            //        db.SubmitChanges();
 
-                if (enrolled.ElementAt(0) != null)
-                    return;
+            //        MessageBox.Show("Studen Put on Waitlist");
+            //    }
+            //    else
+            //    {
+            //        Enrolled i = new Enrolled();
+            //        i.ELID = 
+            //        i.ID = ID;
+            //        i.CRN = CRN;
+            //        db.Enrolleds.InsertOnSubmit(i);
+            //        db.SubmitChanges();
 
-                MessageBox.Show("");
-
-                var courseFull = from a in db.Courses
-                                 where a.CRN == CRN
-                                 select a;
-
-                MessageBox.Show("");
-
-                if (courseFull.ElementAt(0).Size == courseFull.ElementAt(0).Available)
-                {
-                    Waitlist i = new Waitlist();
-                    i.ID = ID;
-                    i.CRN = CRN;
-                    db.Waitlists.InsertOnSubmit(i);
-                    db.SubmitChanges();
-
-                    MessageBox.Show("Studen Put on Waitlist");
-                }
-                else
-                {
-                    Enrolled i = new Enrolled();
-                    i.ELID = 
-                    i.ID = ID;
-                    i.CRN = CRN;
-                    db.Enrolleds.InsertOnSubmit(i);
-                    db.SubmitChanges();
-
-                    MessageBox.Show("Student Enrolled in Course");
-                }
-            }
+            //        MessageBox.Show("Student Enrolled in Course");
+            //    }
+            //}
 
         }
 
@@ -162,22 +147,20 @@ namespace CoursemoAPP
             {
                 this.CourseDetails.Items.Clear();
                 string info = this.Courses.Text;
-                int CRN = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
+                int crn = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
 
-                var getCourseDetails = from c in db.Courses
-                                       where c.CRN == CRN
-                                       select c;
+                Course c = db.GetCourse(crn);
 
-                foreach (Course c in getCourseDetails)
-                {
-                    this.CourseDetails.Items.Add("Semester: " + c._Semester);
-                    this.CourseDetails.Items.Add("Year: " + c._Year);
-                    this.CourseDetails.Items.Add("Type: " + c._Type);
-                    this.CourseDetails.Items.Add("Day: " + c._Day);
-                    this.CourseDetails.Items.Add("Time: " + c._Time);
-                    this.CourseDetails.Items.Add("Size: " + c.Size.ToString());
-                    this.CourseDetails.Items.Add("Current Enrollment: " + (c.Size - c.Available).ToString());
-                }
+                if (c == null)
+                    return;
+
+                this.CourseDetails.Items.Add("Semester: " + c._Semester);
+                this.CourseDetails.Items.Add("Year: " + c._Year);
+                this.CourseDetails.Items.Add("Type: " + c._Type);
+                this.CourseDetails.Items.Add("Day: " + c._Day);
+                this.CourseDetails.Items.Add("Time: " + c._Time);
+                this.CourseDetails.Items.Add("Size: " + c.Size.ToString());
+                this.CourseDetails.Items.Add("Current Enrollment: " + (c.Size - c.Available).ToString());
             }
         }
     }

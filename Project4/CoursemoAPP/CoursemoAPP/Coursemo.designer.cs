@@ -105,6 +105,28 @@ namespace CoursemoAPP
 				return this.GetTable<Waitlist>();
 			}
 		}
+
+        //returns the Student who shares the same Netid as netid, null otherwise
+        public Student GetStudent(string netid)
+        {
+            foreach(Student a in this.GetTable<Student>())
+            {
+                if (a.Netid == netid)
+                    return a;
+            }
+            return null;
+        }
+
+        //returns the Course that shares the same CRN as crn, null otherwise
+        public Course GetCourse(int crn)
+        {
+            foreach(Course a in this.GetTable<Course>())
+            {
+                if (a.CRN == crn)
+                    return a;
+            }
+            return null;
+        }
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Courses")]
@@ -821,7 +843,7 @@ namespace CoursemoAPP
 			this.SendPropertyChanging();
 			entity.Student = null;
 		}
-	}
+    }
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Waitlist")]
 	public partial class Waitlist : INotifyPropertyChanging, INotifyPropertyChanged
