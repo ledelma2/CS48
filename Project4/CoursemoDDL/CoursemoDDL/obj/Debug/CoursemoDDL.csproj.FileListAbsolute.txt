@@ -1,0 +1,7 @@
+C:\Users\Liam Edelman\Documents\School\CS480\CS480_Projects\Project4\CoursemoDDL\CoursemoDDL\bin\Debug\CoursemoDDL.exe.config
+C:\Users\Liam Edelman\Documents\School\CS480\CS480_Projects\Project4\CoursemoDDL\CoursemoDDL\bin\Debug\CoursemoDDL.exe
+C:\Users\Liam Edelman\Documents\School\CS480\CS480_Projects\Project4\CoursemoDDL\CoursemoDDL\bin\Debug\CoursemoDDL.pdb
+C:\Users\Liam Edelman\Documents\School\CS480\CS480_Projects\Project4\CoursemoDDL\CoursemoDDL\obj\Debug\CoursemoDDL.csprojAssemblyReference.cache
+C:\Users\Liam Edelman\Documents\School\CS480\CS480_Projects\Project4\CoursemoDDL\CoursemoDDL\obj\Debug\CoursemoDDL.csproj.CoreCompileInputs.cache
+C:\Users\Liam Edelman\Documents\School\CS480\CS480_Projects\Project4\CoursemoDDL\CoursemoDDL\obj\Debug\CoursemoDDL.exe
+C:\Users\Liam Edelman\Documents\School\CS480\CS480_Projects\Project4\CoursemoDDL\CoursemoDDL\obj\Debug\CoursemoDDL.pdb
