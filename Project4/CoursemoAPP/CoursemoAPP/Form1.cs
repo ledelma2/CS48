@@ -53,7 +53,7 @@ namespace CoursemoAPP
                 {
                     if (w.ID == s.ID)
                     {
-                        MessageBox.Show("Student already enrolled...");
+                        MessageBox.Show("Student already waitlisted...");
                         return;
                     }
                 }
@@ -62,7 +62,7 @@ namespace CoursemoAPP
                 {
                     if (i.ID == s.ID)
                     {
-                        MessageBox.Show("Student already waitlisted...");
+                        MessageBox.Show("Student already enrolled...");
                         return;
                     }
                 }
@@ -169,6 +169,8 @@ namespace CoursemoAPP
             using (db = new CoursemoDataContext())
             {
                 this.CourseDetails.Items.Clear();
+                this.Enrolled.Items.Clear();
+                this.Waitlist.Items.Clear();
                 string info = this.Courses.Text;
                 int crn = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
 
@@ -179,10 +181,42 @@ namespace CoursemoAPP
 
                 int onWaitlist = 0;
 
-                foreach(Waitlist w in db.Waitlists)
+                foreach (Waitlist w in db.Waitlists)
                 {
                     if (c.CRN == w.CRN)
                         onWaitlist++;
+                }
+
+                var wquery = from w in db.Waitlists
+                             where w.CRN == c.CRN
+                             join s in db.Students
+                             on w.ID equals s.ID
+                             select new
+                             {
+                                 netid = s.Netid,
+                                 last = s.LastName,
+                                 first = s.FirstName
+                             };
+
+                foreach (var s in wquery)
+                {
+                    this.Waitlist.Items.Add(s.netid + ": " + s.last + ", " + s.first);
+                }
+
+                var equery = from w in db.Enrolleds
+                             where w.CRN == c.CRN
+                             join s in db.Students
+                             on w.ID equals s.ID                            
+                             select new
+                             {
+                                 netid = s.Netid,
+                                 last = s.LastName,
+                                 first = s.FirstName
+                             };
+
+                foreach (var s in equery)
+                {
+                    this.Enrolled.Items.Add(s.netid + ": " + s.last + ", " + s.first);
                 }
 
                 this.CourseDetails.Items.Add("Semester: " + c._Semester);
