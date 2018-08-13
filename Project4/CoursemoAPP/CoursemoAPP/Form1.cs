@@ -27,7 +27,7 @@ namespace CoursemoAPP
                              orderby c.Department, c.Number, c.CRN
                              select c;
 
-                foreach(Course c in cquery)
+                foreach (Course c in cquery)
                 {
                     this.Courses.Items.Add(c.Department + " " + c.Number + ": " + c.CRN.ToString());
                 }
@@ -36,7 +36,7 @@ namespace CoursemoAPP
                              orderby s.Netid, s.LastName, s.FirstName
                              select s;
 
-                foreach(Student s in squery)
+                foreach (Student s in squery)
                 {
                     this.Students.Items.Add(s.Netid + ": " + s.LastName + ", " + s.FirstName);
                 }
@@ -82,36 +82,110 @@ namespace CoursemoAPP
 
                 if (c.Available == 0)
                 {
-                    Waitlist i = new Waitlist();
-                    i.ID = s.ID;
-                    i.CRN = c.CRN;
-                    db.Waitlists.InsertOnSubmit(i);
-                    db.SubmitChanges();
+                    string sql = string.Format(@"
+                    INSERT INTO 
+                        Waitlist(ID,CRN)
+                        Values({0},{1});
+                    ", s.ID, c.CRN);
+                    db.ExecuteCommand(sql);
 
                     MessageBox.Show("Student Put on Waitlist");
                 }
                 else
                 {
-                    Enrolled i = new Enrolled();
-                    i.ELID =
-                    i.ID = s.ID;
-                    i.CRN = c.CRN;
-                    db.Enrolleds.InsertOnSubmit(i);
+                    string sql = string.Format(@"
+                    INSERT INTO 
+                        Enrolled(ID,CRN)
+                        Values({0},{1});
+                    ", s.ID, c.CRN);
+                    db.ExecuteCommand(sql);
                     c.Available = c.Available - 1;
-                    db.SubmitChanges();
 
                     MessageBox.Show("Student Enrolled in Course");
                 }
 
+                db.SubmitChanges();
+
                 this.CourseDetails.Items.Clear();
                 this.Courses_SelectedIndexChanged(this, null);
             }
-
         }
 
         private void Drop_Click(object sender, EventArgs e)
         {
+            using (db = new CoursemoDataContext())
+            {
+                int crn;
+                string info = this.Students.Text;
+                string netid = info.Substring(0, info.IndexOf(":"));
+                info = this.Courses.Text;
+                crn = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
 
+                Student s = db.GetStudent(netid);
+                Course c = db.GetCourse(crn);
+
+                if (s == null || c == null)
+                {
+                    MessageBox.Show("Student or Course doesn't exist!?!");
+                    return;
+                }
+
+                var wait = from w in db.Waitlists
+                           where w.CRN == c.CRN && w.ID == s.ID
+                           select w;
+
+                if (wait.Count() == 0)
+                {
+                    //student not on waitlist
+                    var enroll = from i in db.Enrolleds
+                                 where i.CRN == c.CRN && i.ID == s.ID
+                                 select i;
+
+                    if (enroll.Count() == 0)
+                    {
+                        //student not on enrolled list either
+                        MessageBox.Show("Student is not enrolled or waitlisted for this class...");
+                        return;
+                    }
+                    else
+                    {
+                        //db.Enrolleds.Attach(enroll);
+                        db.Enrolleds.DeleteOnSubmit(enroll.First());
+                        var query = from w in db.Waitlists
+                                    where w.CRN == c.CRN
+                                    orderby w.WLID
+                                    select w;
+                        if (query.Count() > 0)
+                        {
+                            //person on waitlist available to take space
+                            string sql = string.Format(@"
+                            INSERT INTO 
+                                Enrolled(ID,CRN)
+                                Values({0},{1});
+                            ", query.First().ID, query.First().CRN);
+                            db.ExecuteCommand(sql);
+                            MessageBox.Show("Student dropped from enrolled");
+                            MessageBox.Show("First waitlisted student added to enrolled");
+                            //db.Waitlists.Attach(query.First());
+                            db.Waitlists.DeleteOnSubmit(query.First());
+                            db.SubmitChanges();
+                        }
+                        else
+                        {
+                            c.Available = c.Available + 1;
+                            MessageBox.Show("Student dropped from enrolled");
+                        }
+                    }
+                }
+                else
+                {
+                    //db.Waitlists.Attach(wait);
+                    MessageBox.Show("Student dropped from waitlist");
+                    db.Waitlists.DeleteOnSubmit(wait.First());
+                }
+                db.SubmitChanges();
+                this.Courses_SelectedIndexChanged(this, null);
+            }
         }
 
         private void Swap_Click(object sender, EventArgs e)
