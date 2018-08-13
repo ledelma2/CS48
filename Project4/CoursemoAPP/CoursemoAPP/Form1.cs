@@ -1,4 +1,11 @@
-﻿using System;
+﻿//
+//Liam Edelman
+//U. of Illinois, Chicago
+//CS480, Summer 2018
+//Project 4
+//
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -43,14 +50,27 @@ namespace CoursemoAPP
             }
         }
 
+        private void DelayTransaction(int ms)
+        {
+            if (ms < 0)
+                ms = 0;
+            System.Threading.Thread.Sleep(ms);
+        }
+
         private void Enroll_Click(object sender, EventArgs e)
         {
             using (db = new CoursemoDataContext())
             {
+                DelayTransaction(Int32.Parse(this.Delay.Text));
+
                 int crn;
                 string info = this.Students.Text;
+                if (info.Length == 0)
+                    return;
                 string netid = info.Substring(0, info.IndexOf(":"));
                 info = this.Courses.Text;
+                if (info.Length == 0)
+                    return;
                 crn = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
 
                 Student s = db.GetStudent(netid);
@@ -79,6 +99,8 @@ namespace CoursemoAPP
                         return;
                     }
                 }
+
+                DelayTransaction(Int32.Parse(this.Delay.Text));
 
                 if (c.Available == 0)
                 {
@@ -115,10 +137,16 @@ namespace CoursemoAPP
         {
             using (db = new CoursemoDataContext())
             {
+                DelayTransaction(Int32.Parse(this.Delay.Text));
+
                 int crn;
                 string info = this.Students.Text;
+                if (info.Length == 0)
+                    return;
                 string netid = info.Substring(0, info.IndexOf(":"));
                 info = this.Courses.Text;
+                if (info.Length == 0)
+                    return;
                 crn = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
 
                 Student s = db.GetStudent(netid);
@@ -133,6 +161,8 @@ namespace CoursemoAPP
                 var wait = from w in db.Waitlists
                            where w.CRN == c.CRN && w.ID == s.ID
                            select w;
+
+                DelayTransaction(Int32.Parse(this.Delay.Text));
 
                 if (wait.Count() == 0)
                 {
@@ -190,13 +220,92 @@ namespace CoursemoAPP
 
         private void Swap_Click(object sender, EventArgs e)
         {
+            using (db = new CoursemoDataContext())
+            {
+                DelayTransaction(Int32.Parse(this.Delay.Text));
 
+                int crn;
+                string info = this.Students.Text;
+                if (info.Length == 0)
+                    return;
+                string netid = info.Substring(0, info.IndexOf(":"));
+                info = this.Courses.Text;
+                if (info.Length == 0)
+                    return;
+                crn = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
+
+                Student s1 = db.GetStudent(netid);
+                Course c1 = db.GetCourse(crn);
+                Student s2 = db.GetStudent(this.SwapNetid.Text);
+                Course c2 = db.GetCourse(Int32.Parse(this.SwapCRN.Text));
+
+                if (s1 == null || s2 == null || c1 == null || c2 == null)
+                {
+                    MessageBox.Show("Student(s) or Course(s) don't exist!?!");
+                    return;
+                }
+
+                var enroll1 = from i in db.Enrolleds
+                              where i.CRN == c1.CRN && i.ID == s1.ID
+                              select i;
+
+                var enroll2 = from i in db.Enrolleds
+                              where i.CRN == c2.CRN && i.ID == s2.ID
+                              select i;
+
+                var enroll3 = from i in db.Enrolleds
+                              where i.CRN == c2.CRN && i.ID == s1.ID
+                              select i;
+
+                var enroll4 = from i in db.Enrolleds
+                              where i.CRN == c1.CRN && i.ID == s2.ID
+                              select i;
+
+                if (enroll1.Count() == 0 || enroll2.Count() == 0)
+                {
+                    //student not on enrolled list
+                    MessageBox.Show("Student is not enrolled for this class...");
+                    return;
+                }
+
+                if(enroll3.Count() > 0 || enroll4.Count() > 0)
+                {
+                    MessageBox.Show("Student is already enrolled for this class...");
+                    return;
+                }
+
+                db.Enrolleds.DeleteOnSubmit(enroll1.First());
+
+                string sql1 = string.Format(@"
+                            INSERT INTO 
+                                Enrolled(ID,CRN)
+                                Values({0},{1});
+                            ", enroll1.First().ID, enroll2.First().CRN);
+                db.ExecuteCommand(sql1);
+
+                db.Enrolleds.DeleteOnSubmit(enroll2.First());
+
+                string sql2 = string.Format(@"
+                            INSERT INTO 
+                                Enrolled(ID,CRN)
+                                Values({0},{1});
+                            ", enroll2.First().ID, enroll1.First().CRN);
+                db.ExecuteCommand(sql2);
+
+                db.SubmitChanges();
+                MessageBox.Show("Courses swapped...");
+                this.Courses_SelectedIndexChanged(this, null);
+            }
         }
 
         private void Reset_Click(object sender, EventArgs e)
         {
             using (db = new CoursemoDataContext())
             {
+
+                DelayTransaction(Int32.Parse(this.Delay.Text));
+
+
                 db.ExecuteCommand("TRUNCATE TABLE Waitlist;");
                 db.ExecuteCommand("TRUNCATE TABLE Enrolled;");
                 foreach (Course c in db.Courses)
@@ -220,6 +329,9 @@ namespace CoursemoAPP
             {
                 this.Enrolled.Items.Clear();
                 this.Waitlist.Items.Clear();
+
+                DelayTransaction(Int32.Parse(this.Delay.Text));
+
                 string info = this.Students.Text;
                 string netid = info.Substring(0, info.IndexOf(":"));
 
@@ -268,6 +380,9 @@ namespace CoursemoAPP
                 this.CourseDetails.Items.Clear();
                 this.Enrolled.Items.Clear();
                 this.Waitlist.Items.Clear();
+
+                DelayTransaction(Int32.Parse(this.Delay.Text));
+
                 string info = this.Courses.Text;
                 int crn = Int32.Parse(info.Substring(info.IndexOf(":") + 1));
 
